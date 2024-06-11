@@ -61,3 +61,7 @@ crane.buildPackage rec {
   doCheck = true;
 }
 ```
+
+次に例示するのは`rust-toolchain.toml`だ。このファイルでは、Rust言語で必要とする`rustc`や`cargo`のバージョンだったり、Rustをコンパイルするために必要なコンポーネントなどを書く。本来はRustupというツールが読み込み、それらのツールを用意してくれるが、今回使用する、[rust-overlay](https://github.com/oxalica/rust-overlay)[^1]が`rust-toolchain.toml`を読み込んでくれる。
+
+[^1]: これはOverlayと呼び、現在nixpkgs上に存在するパッケージの、ビルドオプションやパッケージ名を上書きする役割を持っている。
