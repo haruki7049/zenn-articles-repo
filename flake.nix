@@ -14,7 +14,12 @@
       {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
+            # Zenn-cli
             nodejs
+
+            # Nix tools
+            nil
+            nixpkgs-fmt
           ];
 
           shellHook = ''
