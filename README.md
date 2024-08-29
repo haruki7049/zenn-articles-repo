@@ -1,4 +1,4 @@
-# zenn-articles-repp
+# zenn-articles-repo
 ## Usage
 ```bash
 nix run
