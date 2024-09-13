@@ -1,0 +1,11 @@
+title: "Rust,Zig,CommonLispと往くNixビルドシステム"
+summary: "Rust言語、Zig言語、CommonLisp"
+topics: ["rust", "zig", "commonlisp", "nix"]
+published: false
+price: 0 # 有料の場合200〜5000
+# 本に含めるチャプターを順番に並べましょう
+chapters:
+  - abstract
+  - rust
+  - zig
+  - lisp
