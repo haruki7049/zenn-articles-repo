@@ -1,6 +1,6 @@
-title: "Rust,Zig,CommonLispと往くNixビルドシステム"
-summary: "Rust言語、Zig言語、CommonLisp"
-topics: ["rust", "zig", "commonlisp", "nix"]
+title: "Rust,Zigで比べるNix Derivationの作り方"
+summary: "Rust言語とZig言語を使用してアプリケーションを作る時のNix Derivationの作り方の違いを探す本。"
+topics: ["rust", "zig", "nix"]
 published: false
 price: 0 # 有料の場合200〜5000
 # 本に含めるチャプターを順番に並べましょう
@@ -8,4 +8,3 @@ chapters:
   - abstract
   - rust
   - zig
-  - lisp
