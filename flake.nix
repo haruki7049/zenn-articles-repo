@@ -21,7 +21,8 @@
         inputs.treefmt-nix.flakeModule
       ];
 
-      perSystem = { pkgs, ... }:
+      perSystem =
+        { pkgs, ... }:
         let
           nodeEnv = pkgs.callPackage "${inputs.nixpkgs}/pkgs/development/node-packages/node-env.nix" {
             inherit (pkgs)
@@ -56,7 +57,7 @@
           };
           treefmt = {
             projectRootFile = "flake.nix";
-            programs.nixpkgs-fmt.enable = true;
+            programs.nixfmt.enable = true;
           };
           devShells.default = pkgs.mkShell {
             packages = [
