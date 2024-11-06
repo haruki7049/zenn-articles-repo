@@ -2,7 +2,9 @@
 title: "Rust言語とビルダー関数"
 ---
 
-# ビルダー関数
+# Rust言語とビルダー関数
+
+## ビルダー関数
 
 `nixpkgs`では、各言語ごとにDerivationを作るための関数が存在する。Dart言語だと`buildDartApplication`、Nim言語だと`buildNimPackage`が挙げられる。これらビルダー関数は、`stdenv.mkDerivation`などの`Derivation`を作成する関数のラッパーとなっていて、プログラミング言語ごとに、Nix式を短く書くために用意されている。
 

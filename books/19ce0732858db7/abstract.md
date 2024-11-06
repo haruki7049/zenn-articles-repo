@@ -2,7 +2,9 @@
 title: "概要"
 ---
 
-# 始めに
+# 概要
+
+## 始めに
 
 Nixを使用してDerivationを作成するときには、大抵`stdenv.mkDerivation`関数を使用する場合が多いと思う。そうして`stdenv.mkDerivation`関数を使用する時、よく分からないままに、`nativeBuildInputs`アトリビュートに`pkgs.pkg-config`や`pkgs.cmake`などのDerivationを加えた経験がある人もいるのではないだろうか。
 

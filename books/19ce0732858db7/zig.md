@@ -2,7 +2,9 @@
 title: "Zig言語とHook"
 ---
 
-# Hook
+# Zig言語とHook
+
+## Hook
 
 `nixpkgs`には`Hook`と呼ばれるセットアップ作業を簡便にするツールがある。Hookは、一般的なタスクを一つのシェルスクリプトにまとめる目的で作られた。Hookの場合、別の関数を使用するようなことは無いが、`stdenv.mkDerivation`内の`nativeBuildInputs`アトリビュートの値を、使用するHookをまとめたリスト形式にする必要がある。
 今回の題材にもなっている、`zig.hook`は以下のように使用する。
