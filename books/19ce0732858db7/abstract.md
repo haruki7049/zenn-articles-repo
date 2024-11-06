@@ -2,95 +2,28 @@
 title: "概要"
 ---
 
-## ビルダー関数とHook
+# 始めに
 
-`nixpkgs`では、各言語ごとにDerivationを作るための関数が存在する。Dart言語だと`buildDartApplication`、Nim言語だと`buildNimPackage`が挙げられる。これらをこの本ではビルダー関数と呼ぶ。[^1] これらビルダー関数は、`stdenv.mkDerivation`などの`Derivation`を作成する関数のラッパーとなっていて、プログラミング言語ごとに、Nix式を短く書くために用意されている。
+Nixを使用してDerivationを作成するときには、大抵`stdenv.mkDerivation`関数を使用する場合が多いと思う。そうして`stdenv.mkDerivation`関数を使用する時、よく分からないままに、`nativeBuildInputs`アトリビュートに`pkgs.pkg-config`や`pkgs.cmake`などのDerivationを加えた経験がある人もいるのではないだろうか。
 
-```nix
-{
-  # Import nixpkgs to bind `pkgs` variables
-  pkgs = import <nixpkgs> { },
-}:
+簡単に言うと、この`pkgs.cmake`や`pkgs.pkg-config`を`nativeBuildInputs`アトリビュートに加えると、それらは`Hook`として働くようになる。この`Hook`が動作することによって、Nix式の中でCmakeのコマンドライン引数を指定せずとも、デフォルトの設定で良い感じに動かすことができるのだ。
 
-# Call builder function!!
-pkgs.rustPlatform.buildRustPackage {
-  pname = "test-rust";
-  version = "0.1.0";
-  src = ./.;
+それとは別に、`pkgs.rustPlatform.buildRustPackage`や`pkgs.perlPackages.buildPerlPackage`などの関数でDerivationを作成した経験がある人もいるのではないだろうか。これらは、[Nixpkgs manual stable](https://nixos.org/manual/nixpkgs/stable/)にて、`Language- or framework-specific build helpers`、和訳すると`言語またはフレームワーク固有のビルドヘルパー`という風に、ビルドヘルパーの一種であると書かれている。
+今回、この本では`言語またはフレームワーク固有のビルドヘルパー`は簡単のため、`ビルダー関数`と呼ぶ。
 
-  cargoLock.lockFile = ./Cargo.lock;
-}
+この本では、ここまでで話した`Hook`と`ビルダー関数`について深掘りしていく。`Hook`を使用する言語として`Zig言語`、ビルダー関数を使用する言語として`Rust言語`をこの本では使用していく。よくある話として、`Zig言語 vs Rust言語`という話があるが、この本は`Zig言語`と`Rust言語`のどちらが優秀かを議論する本ではなく、単にNixでのDerivationの作り方の違いを挙げる本であることをご留意いただきたい。
+
+それらとは別に、それぞれのチャプターの最後に、簡単な`Hook`や`ビルダー関数`の作り方を書いておくので、参考にしてほしい。
+
+検証環境を以下に書く。
+```txt
+ - system: `"aarch64-darwin"`
+ - host os: `Darwin 24.1.0, macOS 15.1`
+ - multi-user?: `yes`
+ - sandbox: `no`
+ - version: `nix-env (Nix) 2.18.2`
+ - channels(root): `"nixpkgs"`
+ - nixpkgs: `/nix/store/63lvc59rjz075kb1f11xww2x2xqpw1pn-source`
 ```
 
-> Nix式を見ていると、稀に以下のように、引数のアトリビュートセット内で値が定義されないまま式が書かれている時があると思う。
-> ```nix
-> # File name: default.nix
-> {
->   buildDartApplication,
-> }:
->
-> rustPlatform.buildRustPackage {
->   pname = "foofoo";
->   version = "0.1.0";
->   src = ./.;
->   cargoLock.lockFile = ./Cargo.lock;
-> }
-> ```
-> このように書かれていた場合、`nix-build -E 'with import <nixpkgs> { }; callPackage ./default.nix { }'`というようなコマンドを実行すると良い。
-> 1. `nix-build -E` -> コマンドライン引数を、Nix式のファイル名のリストとしてではなく、評価されるNix式のリストとして解釈する。
-> 1. `'with import <nixpkgs> { }; callPackage ./default.nix { }'` -> nixpkgsを`import関数`によって評価して、その中の`callPackage関数`を使用する。`callPackage ./default.nix { }`の第一引数として与えられている`./default.nix`を変更して、評価するNixファイルを変更する。
-
-[^1]: https://nixos.org/manual/nixpkgs/stable/#chap-language-support
-
----
-
-一方、`nixpkgs`には`Hook`と呼ばれるセットアップ作業を簡便にするツールがある。Hookは、一般的なタスクを一つのシェルスクリプトにまとめる目的で作られた。Hookの場合、別の関数を使用するようなことは無いが、`stdenv.mkDerivation`内の`nativeBuildInputs`アトリビュートの値を、使用するHookをまとめたリスト形式にする必要がある。
-今回の題材にもなっている、`zig.hook`は以下のように使用する。
-```nix
-{
-  pkgs ? import <nixpkgs> { },
-}:
-
-pkgs.stdenv.mkDerivation {
-  pname = "test-zig";
-  version = "0.1.0";
-  src = ./.;
-
-  nativeBuildInputs = [
-    pkgs.zig.hook
-  ];
-
-  zigBuildFlags = [
-    "-Dman-pages=true"
-  ];
-
-  dontUseZigCheck = true;
-}
-```
-
-もしも`cmake`を使用したい場合は、この通り書けばビルドできるだろう。
-```nix
-# Run this command in Bash, `nix-build -E 'with import <nixpkgs> { }; callPackage ./default.nix { }'`
-{
-  stdenv,
-  cmake,
-}:
-
-stdenv.mkDerivation {
-  pname = "test-cmake";
-  version = "0.1.0";
-  src = ./.;
-
-  nativeBuildInputs = [
-    cmake
-    # You can comment out below if you want to use ninja instead gnumake!!
-    #ninja
-  ];
-
-  cmakeBuildType = "Debug";
-
-  #cmakeFlags = [
-  #  "-DFOOFOO=on"
-  #];
-}
-```
+この本の内容で、間違っている点や誤字脱字などがあったら、GitHubにあるリポジトリ、[haruki7049/zenn-articles-repo](https://github.com/haruki7049/zenn-articles-repo)にイシューかプルリクエストを立てていただくか、私のメールアドレスにその旨の電子メールを送ってくれると幸いだ。私のメールアドレスは、[github.com/haruki7049](https://github.com/haruki7049)に載っているので確認いただきたい。
