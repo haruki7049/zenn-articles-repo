@@ -15,7 +15,7 @@ Nixを使用してDerivationを作成するときには、大抵`stdenv.mkDeriva
 
 それらとは別に、それぞれのチャプターの最後に、簡単な`Hook`や`ビルダー関数`の作り方を書いておくので、参考にしてほしい。
 
-検証環境を以下に書く。
+検証環境を以下に書く。この本で参照している`nixpkgs`のコミットハッシュは、`nixpkgs-unstable`ブランチの[8c4dc69](https://github.com/NixOS/nixpkgs/commit/8c4dc69b9732f6bbe826b5fbb32184987520ff26)を使用している。
 ```txt
  - system: `"aarch64-darwin"`
  - host os: `Darwin 24.1.0, macOS 15.1`
