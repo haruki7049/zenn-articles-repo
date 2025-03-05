@@ -58,3 +58,10 @@ stdenv.mkDerivation {
 ```
 
 ## Hookの実態
+
+`/pkgs/development/compilers/zig`の中にZig言語のHookの実装がある。以下のファイルがそれらに該当する。
+
+- `setup-hook.sh`
+- `hook.nix`
+- `generic.nix`
+
